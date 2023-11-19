@@ -1,4 +1,7 @@
 import fastify from 'fastify';
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 // APP Config
 const envToLogger = {
@@ -15,16 +18,15 @@ const envToLogger = {
     test:false,
 }
 
-const app = fastify({
-    logger: true
-});
+
+const app = fastify({logger:true});
 
 app.get('/health-check', async(request,reply) =>{
     reply.code(200).send({success:true, msg:'Health working well!!'})
 })
 
 
-const port = 5000 || process.env.PORT
+const port:number = 5000 || process.env.PORT
 
 async function startServer() {
    try {
@@ -38,3 +40,5 @@ async function startServer() {
 }
 
 startServer();
+
+exports.default = app;
