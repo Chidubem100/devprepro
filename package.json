@@ -29,7 +29,7 @@
     "fastify-plugin": "^4.5.1",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
-    "moongoose": "^0.0.5",
+    "mongoose": "^8.0.1",
     "nodemailer": "^6.9.7",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.2.2"

@@ -1,37 +1,35 @@
 import fastify from 'fastify';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
+import log from './config/logger';
+import {connectDB,disConnectDB} from './src/dbConfig/DbConnection'
+import{notFound,errorHandler} from './src/middleware/index'
 
 dotenv.config();
+const app = fastify();
+
+
+
 
 // APP Config
-const envToLogger = {
-     development: {
-        transport: {
-            target: 'pino-pretty',
-            options: {
-                translateTime: 'HH:MM:ss Z',
-                ignore: 'pid,hostname'
-            },
-        },
-    },
-    production:true,
-    test:false,
-}
 
-
-const app = fastify({logger:true});
 
 app.get('/health-check', async(request,reply) =>{
-    reply.code(200).send({success:true, msg:'Health working well!!'})
+    console.log(request)
+    return reply.code(200).send({success:true, msg:'Health working well!!'})
 })
+
+// app.register(notFound)
+app.register(errorHandler)
 
 
 const port:number = 5000 || process.env.PORT
 
 async function startServer() {
    try {
+        connectDB(process.env.DBURI)
         await app.listen({port:port});
-        console.log(`server started on port${port}`)
+        log.info(`Server running on port ${port}`)
+        // console.log(`server started on port${port}`)
    } catch (error) {
         console.log(error)
         process.exit(1)
@@ -41,4 +39,4 @@ async function startServer() {
 
 startServer();
 
-exports.default = app;
+export default  app;
