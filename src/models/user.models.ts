@@ -1,10 +1,8 @@
-import {Schema, Types, Model, model} from 'mongoose';
+import {Schema, Types, model, Document} from 'mongoose';
 import bcrypt from 'bcrypt';
-import { ExpressValidator, checkSchema } from 'express-validator';
-import validator from 'validator'
-import { transpileModule } from 'typescript';
+import validator from 'validator';
 
-interface User {
+export interface User extends Document {
    readonly _id: Types.ObjectId,
    email: string,
    username: string,
@@ -23,10 +21,8 @@ const userSchema = new Schema<User>({
     email: {
         type: String,
         required: true,
-        validate: {
-            validator : validator.isemail,
-            message: 'Please provide a valid email'
-        }
+        validator : validator.isEmail,
+        message: 'Please provide a valid email'
     },
     username: {
         type:String,
@@ -37,7 +33,7 @@ const userSchema = new Schema<User>({
     password: {
         type: String,
         required: true,
-        minlength: [7,"Password should not be less than 7 characters"]
+        minlength: [8,"Password should not be less than 7 characters"]
     },
     avatar: {
         type: String,
@@ -72,5 +68,9 @@ const userSchema = new Schema<User>({
     }
 });
 
-const UserModel = model('User', userSchema);
+
+
+
+
+const UserModel = model<User>('User', userSchema);
 export default UserModel;
