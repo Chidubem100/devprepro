@@ -5,7 +5,13 @@ import {connectDB,disConnectDB} from './src/dbConfig/DbConnection'
 import{notFound,errorHandler} from './src/middleware/index'
 
 dotenv.config();
-const app = fastify();
+const app = fastify({
+     trustProxy:true,
+     logger: {
+          useOnlyCustomLevels: true,
+          level: 'warn'
+     }
+});
 
 
 
