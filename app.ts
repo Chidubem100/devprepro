@@ -1,23 +1,26 @@
-import fastify from 'fastify';
+import fastify,{FastifyReply,FastifyRequest} from 'fastify';
 import dotenv from 'dotenv';
 import log from './config/logger';
 import {connectDB,disConnectDB} from './src/dbConfig/DbConnection'
 import{notFound,errorHandler} from './src/middleware/index'
+import { levels, pino } from 'pino';
+import router from './src/index';
+import allRoute from './src/routes';
 
 dotenv.config();
 const app = fastify({
      trustProxy:true,
      logger: {
-          useOnlyCustomLevels: true,
-          level: 'warn'
-     }
+          level: 'info',
+          timestamp: pino.stdTimeFunctions.isoTime,
+     },
 });
 
 
 
 
 // APP Config
-
+app.register(allRoute,{prefix:'/api'});
 
 app.get('/health-check', async(request,reply) =>{
     console.log(request)

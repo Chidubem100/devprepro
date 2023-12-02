@@ -1,7 +1,6 @@
 {
   "name": "devprepro",
   "version": "1.0.0",
-  "type": "module",
   "description": "dev platform",
   "main": "app.js",
   "scripts": {
