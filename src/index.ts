@@ -1,20 +1,11 @@
-import fastify from "fastify";
+import fastify, {FastifyPluginAsync,FastifyInstance,FastifyPluginOptions} from "fastify";
 import userRouter from "./routes";
-import allroute from './routes/index';
-import def from "ajv/dist/vocabularies/discriminator";
-const router = fastify();
-
-router.register(allroute,{prefix:'/user'});
-export default router;
-
-// const x = (request,reply,done) =>{
-//     router.register(userRouter)
-//     done()
-// }
-
-// router.register(userRouter)
+import fp from 'fastify-plugin';
+import allRoute from "./routes/index";
 
 
-// export default router;
+const Router:FastifyPluginAsync = async(server:FastifyInstance, options:FastifyPluginOptions)=>{
+    server.register(allRoute,{prefix:'/user'})
+}
 
-
+export default fp(Router);

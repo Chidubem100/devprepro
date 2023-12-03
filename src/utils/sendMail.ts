@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 import nodemailerConfig from "./nodemailerConfig";
 import nodemailer from  "nodemailer";
 

@@ -28,9 +28,10 @@ const opt =  {
 const oppt = {
     schema: {
         body: ajv.getSchema("urn:schema:request:user")?.schema,
-        headers: ajv.getSchema("urn:schema:request:UserAccessToken")?.schema
+        // headers: ajv.getSchema("urn:schema:request:UserAccessToken")?.schema
     },
     handler: function(request: FastifyRequest, reply:FastifyReply){
+        console.log(request.body)
         reply.send({success: true, msg: `ip address is ${request.ip}, body is ${request.body}`})
     }
 }
