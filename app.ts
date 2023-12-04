@@ -1,36 +1,27 @@
-import fastify,{FastifyReply,FastifyRequest} from 'fastify';
+import fastify,{FastifyInstance, FastifyReply,FastifyRequest, HookHandlerDoneFunction} from 'fastify';
 import dotenv from 'dotenv';
 import log from './config/logger';
 import {connectDB,disConnectDB} from './src/dbConfig/DbConnection'
-import{notFound,errorHandler} from './src/middleware/index'
-import { levels, pino } from 'pino';
 import Router from './src/index';
 import allRoute from './src/routes';
+import { errorHandler } from './src/middleware/errorHandler';
+import ErrorHandler from './src/middleware/MainErrorHandler';
+import fastifyPlugin from 'fastify-plugin';
 
 dotenv.config();
-const app = fastify({
-     trustProxy:true,
-     logger: {
-          level: 'info',
-          timestamp: pino.stdTimeFunctions.isoTime,
-     },
-});
-
-
+const app:FastifyInstance = fastify();
 
 
 // APP Config
 app.register(Router, {prefix:'/api/v1'})
-
 
 app.get('/health-check', async(request,reply) =>{
     console.log(request)
     return reply.code(200).send({success:true, msg:'Health working well!!'})
 })
 
-// app.register(notFound)
-app.register(errorHandler)
 
+app.register(errorHandler)
 
 const port:number = 5000 || process.env.PORT
 

@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
-
+import log from '../../config/logger';
 
 const connectDB = async(uri:any) =>{
     try {
         await mongoose.connect(uri)
-        console.log('database connected')
+        log.info('Database connected')
     } catch (error) {
+        log.warn('Database Error occurred')
         console.log(error)   
     }
     
