@@ -2,7 +2,7 @@ import nodemailerConfig from "./nodemailerConfig";
 import nodemailer from  "nodemailer";
 
 
-function sendMailConfig(to:string,subject:string,html:string){
+function sendMailConfig(to:string, subject:string, html:string){
 
     const transporter = nodemailer.createTransport({
         host: process.env.EMAIL_HOST,
@@ -30,5 +30,7 @@ function sendMailConfig(to:string,subject:string,html:string){
         html,
     })
 }
+
+
 
 export default sendMailConfig;

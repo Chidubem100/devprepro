@@ -1,5 +1,5 @@
 import HttpExceptions from "../helpers/httpExceptions";
-import fastify,{FastifyReply,FastifyRequest} from "fastify";
+import fastify,{FastifyReply,FastifyRequest, HookHandlerDoneFunction} from "fastify";
 
 
 // Handle cast errors
@@ -43,7 +43,7 @@ const sendErrordev = (err:any, reply:FastifyReply) =>{
 export const errorHandler = (
     error: any,
     reply: FastifyReply,
-    done:any
+    done: HookHandlerDoneFunction
 ) =>{
     error.statusCode = error.statusCode;
     error.errors = error.errors || null;

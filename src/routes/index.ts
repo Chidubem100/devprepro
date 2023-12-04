@@ -5,7 +5,7 @@ import fastify,{FastifyInstance,
     FastifyRequest
 } from "fastify";
 import fp from "fastify-plugin";
-import ajv from "./ajvLib";
+import ajv from "../middleware/validations/ajvLib";
 import fastifyCookie from "@fastify/cookie";
 
 // fastify.post
