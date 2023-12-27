@@ -5,7 +5,7 @@ import fastifyPlugin from 'fastify-plugin';
 import { disconnect } from 'mongoose';
 
 dotenv.config();
-const app:FastifyInstance = fastify();
+const app = fastify();
 
 
 // APP Config
@@ -14,6 +14,9 @@ app.get('/health-check', async(request,reply) =>{
     return reply.code(200).send({success:true, msg:'Health working well!!'})
 })
 
+app.register(
+     swa
+)
 
 const port:number = 5000 || process.env.PORT
 
