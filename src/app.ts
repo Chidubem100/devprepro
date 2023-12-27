@@ -1,7 +1,7 @@
 import fastify,{FastifyInstance, FastifyReply,FastifyRequest, HookHandlerDoneFunction} from 'fastify';
 import dotenv from 'dotenv';
 import log from '../config/logger';
-import {connectDB,disConnectDB} from './dbConfig/DbConnection'
+import {connectDB,disConnectDB} from './config/DbConnection'
 import Router from './index';
 import allRoute from './routes';
 import { errorHandler } from './middleware/errorHandler';
