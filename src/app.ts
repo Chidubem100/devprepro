@@ -1,11 +1,11 @@
 import fastify,{FastifyInstance, FastifyReply,FastifyRequest, HookHandlerDoneFunction} from 'fastify';
 import dotenv from 'dotenv';
-import log from './config/logger';
-import {connectDB,disConnectDB} from './src/dbConfig/DbConnection'
-import Router from './src/index';
-import allRoute from './src/routes';
-import { errorHandler } from './src/middleware/errorHandler';
-import ErrorHandler from './src/middleware/MainErrorHandler';
+import log from '../config/logger';
+import {connectDB,disConnectDB} from './dbConfig/DbConnection'
+import Router from './index';
+import allRoute from './routes';
+import { errorHandler } from './middleware/errorHandler';
+import ErrorHandler from './middleware/MainErrorHandler';
 import fastifyPlugin from 'fastify-plugin';
 
 dotenv.config();
