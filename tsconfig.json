@@ -10,7 +10,6 @@
     "rootDir": "./src",                                  /* Specify the root folder within your source files. */
   
     /* Emit */
-    "rootDir": "./",
     "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
     
     /* Interop Constraints */
