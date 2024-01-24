@@ -3,38 +3,63 @@ import dotenv from 'dotenv';
 import {connectDB,disConnectDB} from './config/DbConnection'
 import fastifyPlugin from 'fastify-plugin';
 import { disconnect } from 'mongoose';
-import swagger from "@fastify/swagger";
-import { withRefResolver } from 'fastify-zod';
-import {version} from '../package.json'
+import { register, withRefResolver } from 'fastify-zod';
+import fastifySwagger from '@fastify/swagger';
+import fastifySwaggerUi from '@fastify/swagger-ui';
 
 dotenv.config();
 const app = fastify();
 
 
+const swaggerOptions = {
+   swagger: {
+      info:{
+         title: 'Devprepro',
+         description: " Devprepro documentation",
+         version: '1.0.0'
+      },
+      host: "localhost:5000",
+      schemes: ['http', "https"],
+      consumes: ["application/json"],
+      produces: ["application/json"],
+      tags: [{name:"default", description: "default"}]
+   },
+};
+
+const swaggerUiOptions = {
+   routePrefix: "/docs",
+   exposeRoute: true
+}
+
 // APP Config
-app.get('/health-check', async(request,reply) =>{
-    console.log(request)
-    return reply.code(200).send({success:true, msg:'Health working well!!'})
+app.register(fastifySwagger, swaggerOptions);
+app.register(fastifySwaggerUi, swaggerUiOptions);
+
+
+app.register((app, options, done) =>{
+   app.get("/", {
+      schema: {
+         tags: ["default"],
+         response: {
+            200: {
+               type: "object",
+               properties: {
+                  response: {type:"string"},
+               },
+            },
+         },         
+      },
+      handler: (req,res) =>{
+         res.send({response:"Testing shits out!!"})
+      },
+   });
+   done();
 });
 
-// app.register(
-   
-// )
-
-
-// app.register(
-//    swagger,
-//    withRefResolver({
-//       routePrefix: '/docs',
-//       openapi: {
-//          info:{
-//             title: 'devprepro',
-//             description: "Api for devprepro",
-//             version,
-//          }
-//       }
-//    })
-// )
+app.get('/health-check', async(request,reply) =>{
+   //  console.log(request)
+    return reply.code(200).send({success:true, msg:'Health working well!!'})
+});
 
 const port:number = 5000 || process.env.PORT
 
