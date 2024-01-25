@@ -27,11 +27,17 @@ const themeEnum = z.enum([
 ]).default("default");
 
 
-export const userSchema = z.object({
+const UserSchema = z.object({
     _id: z.string().optional(),
-    username: z.string().min(2).max(40).refine((val) => val.trim() !== '', {message:"Username is required!!"}),
-    email: z.string().email({message: "Invalid Email"}).refine((val) => val.trim() !== '', {message:"Email is required!!"}),
-    password: z.string().min(8).refine((val) => val.trim() !== "", {message: "Password is required!!"}),
+    username: z.string({
+        required_error: "Username is required",
+        invalid_type_error: "Field must be a string"
+    }).min(2).max(40),
+    email: z.string({
+        required_error: "Username is required",
+        invalid_type_error: "Field must be a string"
+    }).email({message: "Invalid Email"}).refine((val) => val.trim() !== '', {message:"Email is required!!"}),
+    password: z.string().min(8),
     role: userRoleEnum,
     verificationToken: z.string().nullable(),
     isVerified: z.boolean().default(false),
@@ -43,3 +49,5 @@ export const userSchema = z.object({
     colorMode: colorModeEnum.default("light"),
     themes: z.array(themeEnum).default([]),
 });
+
+export type CreateUserInput = z.infer<typeof UserSchema>
