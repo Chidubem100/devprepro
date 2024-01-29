@@ -28,7 +28,7 @@ const themeEnum = z.enum([
 
 
 const UserSchema = z.object({
-    _id: z.string().optional(),
+    // _id: z.string().optional(),
     username: z.string({
         required_error: "Username is required",
         invalid_type_error: "Field must be a string"
@@ -47,7 +47,7 @@ const UserSchema = z.object({
     bio: z.string(),
     preferences: z.array(prefrenceEnum).default([]),
     colorMode: colorModeEnum.default("light"),
-    themes: z.array(themeEnum).default([]),
+    themes: themeEnum.default("default"),
 });
 
-export type CreateUserInput = z.infer<typeof UserSchema>
+export type CreateUserInput = z.infer<typeof UserSchema>;

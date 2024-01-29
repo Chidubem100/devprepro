@@ -64,7 +64,7 @@ app.get('/health-check', async(request,reply) =>{
     return reply.code(200).send({success:true, msg:'Health working well!!'})
 });
 
-const port:number = 5000 || process.env.PORT
+const port:number = 2040 || process.env.PORT
 
 async function startServer() {
      try {

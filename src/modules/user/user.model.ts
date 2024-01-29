@@ -1,11 +1,11 @@
-import mongoose, {Model} from "mongoose";
+import mongoose, {Schema} from "mongoose";
 import { CreateUserInput } from "./user.schema";
 import bcrypt from "bcrypt";
 import { z } from "zod";
 
 // type User = z.infer<typeof userSchema>;
 
-const userMongooseSchema = new mongoose.Schema<CreateUserInput>({
+const userMongooseSchema: Schema = new mongoose.Schema<CreateUserInput>({
     username: {
         type:String,
         required: true,
@@ -52,6 +52,6 @@ userMongooseSchema.methods.comparePassword = async function(userPassword:string)
     return await bcrypt.compare(userPassword, this.password)
 };
 
-export  const userModel = mongoose.model("User", userMongooseSchema);
-// export const user = userMongooseSchema;
-// export const UserModel = mongoose.model<UserSchemaType & mongoose.Document>('User');
+
+const User = mongoose.model("User", userMongooseSchema);
+export default User;
