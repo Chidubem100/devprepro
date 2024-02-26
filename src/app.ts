@@ -8,6 +8,8 @@ import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import userRoute from './modules/user/user.routes';
 import authRoute from './modules/auth/auth.routes';
+import { errorHandler } from './errors';
+import { deleteDatabase } from './config/dropDb';
 
 dotenv.config();
 const app = fastify();
@@ -33,11 +35,14 @@ const swaggerUiOptions = {
    exposeRoute: true
 }
 
+// deleteDatabase(process.env.DBURI);
+
 // APP Config
 app.register(fastifySwagger, swaggerOptions);
 app.register(fastifySwaggerUi, swaggerUiOptions);
 app.register(userRoute, {prefix: "/v1/api/user"});
 app.register(authRoute, {prefix:"/api/v1"})
+app.register(errorHandler);
 
 app.register((app, options, done) =>{
    app.get("/", {

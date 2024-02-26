@@ -1,11 +1,14 @@
-import mongoose, {Schema} from "mongoose";
-import { CreateUserInput } from "./user.schema";
+import mongoose from "mongoose";
+// import User from "./user.schema";
+import UserSchema from "./user.schema";
 import bcrypt from "bcrypt";
 import { z } from "zod";
 
-// type User = z.infer<typeof userSchema>;
+type User = z.infer<typeof UserSchema>;
+// interface UserModel extends Document, User{}
 
-const userMongooseSchema: Schema = new mongoose.Schema<CreateUserInput>({
+const userMongooseSchema = new mongoose.Schema<User>({
+   
     username: {
         type:String,
         required: true,
@@ -23,23 +26,44 @@ const userMongooseSchema: Schema = new mongoose.Schema<CreateUserInput>({
         minlength: [8, "Password should not be less than 8 characters!!"]
     },
     bio:{
-        type:String,
+        type: String,
         trim: true
     },
     role:{
         type: String,
         default: "user"
     },
+    active: {
+        type: Boolean,
+        default: true
+    },
     verificationToken: String,
-    isVerified:{type:Boolean, default:false},
+    isVerified:{
+        type:Boolean, 
+        default:false
+    },
     isVerifiedDate: Date,
     passwordToken: String,
     passwordTokenExpiration: Date,
     preferences: [
         String
     ],
-    colorMode: String,
-    themes: String
+    colorMode: {
+        type: String,
+        default: "dark",
+        enum: [
+            "light", 
+            "dark"
+        ]
+    },
+    themes: {
+        type:String,
+        default: "default",
+        enum: [
+            "default",
+            "custom"
+        ]
+    }
 },{timestamps:true});
 
 userMongooseSchema.pre("save", async function(){
