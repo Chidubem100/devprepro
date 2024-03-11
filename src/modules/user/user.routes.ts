@@ -1,8 +1,12 @@
 import { FastifyInstance } from "fastify";
-import { registerUserHandler } from "./user.controller";
+import { authMiddleware } from "../../middleware";
+import { testUserHandler } from "./user.controller";
 
 async function userRoute(server:FastifyInstance) {
-    server.post("/register", registerUserHandler)
+    server.get("/test", {
+        preHandler: authMiddleware,
+        handler: testUserHandler
+    })
 }
 
 export default userRoute;

@@ -2,6 +2,7 @@ import nodemailerConfig from "./nodemailerConfig";
 import nodemailer from  "nodemailer";
 
 
+
 function sendMailConfig(to:string, subject:string, html:string){
 
     const transporter = nodemailer.createTransport({

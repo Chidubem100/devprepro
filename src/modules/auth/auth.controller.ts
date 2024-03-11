@@ -55,16 +55,15 @@ async function registerUserHandler(
 
         const userAgent = request.headers['user-agent']
         const ip = request.ip
-        let refresh_token = crypto.randomBytes(40).toString('hex');
+        let refreshToken = crypto.randomBytes(40).toString('hex');
             
-        const userToken = {refresh_token,userAgent,ip,user:user._id}
-            
+        const accessToken = jwt.sign(userPayload, "secret", {expiresIn: '10d'});
+        refreshToken = jwt.sign({userPayload,refreshToken}, "secret",{expiresIn:'70d'});    
     
-        await Token.create(userToken)
+        await Token.create({refreshToken,userAgent,ip,user:user._id})
         
-        const accessToken = jwt.sign(userPayload, "secret", {expiresIn: '1d'});
-        const refreshToken = jwt.sign({userPayload,refresh_token}, "secret",{expiresIn:'4d'});
-                    
+        // console.log(refreshToken)            
+
         return reply.code(201).send({
             msg: "Success",
             user:{
@@ -88,7 +87,6 @@ async function loginUserHandler(
 ){
     
     try {
-        // const { username, password} = request.body;
 
         if(!request.body){
             throw new BadRequestApiError("Pleae provide all needed value(s)", 400)
@@ -101,7 +99,7 @@ async function loginUserHandler(
         }
 
         const isUserExist = await findUserByusername(username);
-
+        
         if(!isUserExist){
             throw new BadRequestApiError("invalid credential(s)",400)
         }
@@ -112,23 +110,27 @@ async function loginUserHandler(
             throw new UnauthenticatedApiError("Invalid credentials", 401)
         }
 
-        let refresh_token:string |null |undefined;
-
+        let refreshToken;
+        
         const existingToken = await Token.findOne({user: isUserExist._id})
+        
         if(existingToken){
+            
             const {isValid} = existingToken;
             if(!isValid){
                 throw new UnauthenticatedApiError("Temporarily prohibited", 401)
             }
-            refresh_token = existingToken.refreshToken;
-
+            refreshToken = existingToken.refreshToken;
+            // console.log(existingToken)
+            // console.log(refreshToken)
+            
             const userPayload = {
                 userId: isUserExist._id,
                 username: isUserExist.username,
                 email: isUserExist.email
             }
     
-            const accessToken = jwt.sign(userPayload, "secret", {expiresIn: '1d'});
+            const accessToken = jwt.sign(userPayload, "secret", {expiresIn: '10d'});
                     
             return reply.code(201).send({
                 msg: "Success",
@@ -136,13 +138,13 @@ async function loginUserHandler(
                     username: isUserExist.username,
                     userId: isUserExist._id,
                     accessToken,
-                    refreshToken: refresh_token
+                    refreshToken
                 }
             
             })
 
         }
-
+        
         const userPayload = {
             userId: isUserExist._id,
             username: isUserExist.username,
@@ -151,17 +153,16 @@ async function loginUserHandler(
 
         const userAgent = request.headers['user-agent']
         const ip = request.ip
-        refresh_token = crypto.randomBytes(40).toString('hex');
+        refreshToken = crypto.randomBytes(40).toString('hex');
+        // console.log(refreshToken)    
+        // const userToken = {refreshToken,userAgent,ip,user:isUserExist._id}
             
-        const userToken = {refresh_token,userAgent,ip,user:isUserExist._id}
-            
-    
-        await Token.create(userToken)
+        await Token.create({refreshToken,userAgent,ip,user:isUserExist._id})
         
-        const accessToken = jwt.sign(userPayload, "secret", {expiresIn: '1d'});
-        const refreshToken = jwt.sign({userPayload,refresh_token}, "secret",{expiresIn:'4d'});
+        const accessToken = jwt.sign(userPayload, "secret", {expiresIn: '10d'});
+        refreshToken = jwt.sign({userPayload,refreshToken}, "secret",{expiresIn:'70d'});
           
-        console.log(isUserExist)
+        // console.log(refreshToken)
         
         return reply.code(201).send({
             msg: "Success",
@@ -175,7 +176,7 @@ async function loginUserHandler(
         })
 
     } catch (error) {
-        // console.log(error)
+        console.log(error)
         return error;
     }
 }
@@ -193,7 +194,7 @@ async function forgotPassword(
         }
  
         const {email} = request.body
-        if(email){
+        if(!email){
             throw new BadRequestApiError("Please provide the needed value(s)", 400)
         }
 
@@ -248,6 +249,10 @@ async function resetPassword(
             throw new BadRequestApiError("Provide the needed value(s)", 400)
        }
  
+       if(newPassword !== confirmPassword){
+            throw new BadRequestApiError("Password and confirm password doesn't match",400)
+       }
+
        const user = await findUserByEmail(email)
 
        if(user){
@@ -269,6 +274,8 @@ async function resetPassword(
                   success: true,
                   msg: "Password changeed successfully"  
                 })
+            }else{
+                throw new BadRequestApiError("Something went wrong", 400)
             }
        }
 
@@ -281,5 +288,7 @@ async function resetPassword(
 
 export {
     registerUserHandler,
-    loginUserHandler
+    loginUserHandler,
+    forgotPassword,
+    resetPassword
 }

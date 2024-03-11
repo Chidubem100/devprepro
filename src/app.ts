@@ -40,7 +40,7 @@ const swaggerUiOptions = {
 // APP Config
 app.register(fastifySwagger, swaggerOptions);
 app.register(fastifySwaggerUi, swaggerUiOptions);
-app.register(userRoute, {prefix: "/v1/api/user"});
+app.register(userRoute, {prefix: "/api/v1/user"});
 app.register(authRoute, {prefix:"/api/v1"})
 app.register(errorHandler);
 

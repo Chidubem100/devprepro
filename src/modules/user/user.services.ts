@@ -21,7 +21,8 @@ export async function findUserByusername(val:string){
 }
 
 export async function findUserById(val:string){
-    const user = await User.findById({_id:val});
+    const user = await User.findById(val);
+    // const user = await User.findById({_id:val});
     return user;
 }
 
