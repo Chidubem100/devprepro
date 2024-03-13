@@ -115,7 +115,7 @@ async function loginUserHandler(
         }
 
         const isPasswordCorrect = await comparePassword(password, isUserExist.password)
-        
+
         if(!isPasswordCorrect){
             throw new UnauthenticatedApiError("Invalid credentials", 401)
         }
@@ -268,13 +268,20 @@ async function resetPassword(
             throw new BadRequestApiError("Please provide the needed value(s)", 400) 
        } 
        const {token,email,newPassword, confirmPassword} = request.body
- 
+       const isNewPasswordStrong = isPasswordStrong(newPassword);
+       const isConfirmPasswordStrong = isPasswordStrong(confirmPassword);
+
        if(!token || !email || !newPassword || !confirmPassword){
             throw new BadRequestApiError("Provide the needed value(s)", 400)
        }
- 
+
        if(newPassword !== confirmPassword){
             throw new BadRequestApiError("Password and confirm password doesn't match",400)
+       }
+
+       if(!isConfirmPasswordStrong || !isNewPasswordStrong){
+                
+            throw new BadRequestApiError("Password must contain an uppercase and smallcase letters, a number and special character",400)
        }
 
        const user = await findUserByEmail(email)
