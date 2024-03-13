@@ -57,8 +57,18 @@ async function registerUserHandler(
         const ip = request.ip
         let refreshToken = crypto.randomBytes(40).toString('hex');
             
-        const accessToken = jwt.sign(userPayload, "secret", {expiresIn: '10d'});
-        refreshToken = jwt.sign({userPayload,refreshToken}, "secret",{expiresIn:'70d'});    
+        const accessToken = jwt.sign({
+            userId: user._id,
+            username: user.username,
+            email: user.email
+        }, "secret", {expiresIn: '10d'});
+        
+        refreshToken = jwt.sign({
+            userId: user._id,
+            username: user.username,
+            email: user.email,
+            refreshToken}, 
+        "secret",{expiresIn:'70d'});    
     
         await Token.create({refreshToken,userAgent,ip,user:user._id})
         
@@ -105,7 +115,7 @@ async function loginUserHandler(
         }
 
         const isPasswordCorrect = await comparePassword(password, isUserExist.password)
-
+        
         if(!isPasswordCorrect){
             throw new UnauthenticatedApiError("Invalid credentials", 401)
         }
@@ -129,8 +139,13 @@ async function loginUserHandler(
                 username: isUserExist.username,
                 email: isUserExist.email
             }
-    
-            const accessToken = jwt.sign(userPayload, "secret", {expiresIn: '10d'});
+            const accessToken = jwt.sign({
+                userId: isUserExist._id,
+                username: isUserExist.username,
+                email: isUserExist.email
+            }, "secret", {expiresIn: '10d'});
+            
+            // const accessToken = jwt.sign(userPayload, "secret", {expiresIn: '10d'});
                     
             return reply.code(201).send({
                 msg: "Success",
@@ -159,8 +174,17 @@ async function loginUserHandler(
             
         await Token.create({refreshToken,userAgent,ip,user:isUserExist._id})
         
-        const accessToken = jwt.sign(userPayload, "secret", {expiresIn: '10d'});
-        refreshToken = jwt.sign({userPayload,refreshToken}, "secret",{expiresIn:'70d'});
+        const accessToken = jwt.sign({
+            userId: isUserExist._id,
+            username: isUserExist.username,
+            email: isUserExist.email
+        }, "secret", {expiresIn: '10d'});
+        refreshToken = jwt.sign({
+            userId: isUserExist._id,
+            username: isUserExist.username,
+            email: isUserExist.email,
+            refreshToken}, 
+        "secret",{expiresIn:'70d'});
           
         // console.log(refreshToken)
         

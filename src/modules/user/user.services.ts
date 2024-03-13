@@ -20,11 +20,18 @@ export async function findUserByusername(val:string){
     return user;
 }
 
-export async function findUserById(val:string){
-    const user = await User.findById(val);
-    // const user = await User.findById({_id:val});
+export async function findUById(val:string){
+    const user = await User.findById(val).select('-password');
+    
     return user;
 }
+
+export async function findUserById(val:string){
+
+    const user = await User.findById({_id:val}).select('-password');
+    return user;
+}
+
 
 export async function findAllUser(){
     const user = await User.find({});

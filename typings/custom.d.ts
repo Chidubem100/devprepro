@@ -6,14 +6,18 @@ type  userPayload = {
     userId: string,
     username: string,
     email: string,
-    iat?: number,
-    exp?: number
+    // iat?: number,
+    // exp?: number
 
 }
 
 declare module 'fastify' {
     interface FastifyRequest {
-        
-        user: userPayload
+        user: {
+            userId: string,
+            username: string,
+            email: string
+        }
+        // user: userPayload
     }
 }

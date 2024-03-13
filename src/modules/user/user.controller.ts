@@ -1,40 +1,16 @@
 import { FastifyRequest,  FastifyReply} from "fastify";
-import { findUserById } from "./user.services";
-// import User from "./user.model";
-import { userPayload } from "../../../typings/custom";
+import { findUserById, findUById } from "./user.services";
 
-interface UserPayload {
-    userId: string;
-    username: string;
-    email: string;
-}
-
-interface UserInterface {
-    userPayload: UserPayload
-    // refreshToken: string | undefined;
-    iat: number | undefined; 
-    exp: number | undefined
-}
 
 async function testUserHandler(request: FastifyRequest, reply: FastifyReply){
-    const x = request.user as UserInterface['userPayload'];
-    // const q =  request.user.userPayload as UserPayload
-    const y: UserInterface = {
-        userPayload: x,
-        // refreshToken: request.user.refreshToken,
-        iat: request.user.iat,
-        exp: request.user.exp
-    }
-    // cosnt x = (request.user as {userPayload: {userId: string}}).userPayload.userId;
-    // const x = (request.user as UserInterface).userPayload.userId
-    // const {_id: userId} = request;
-    // const user = await User.findById(req.user.userId).select('-password')
-   console.log(y.userPayload.userId)
-//    const x = request.user.userPayload.userId;
-//    const userId = (x as {userId:{}}).userPayload.userId;
-    // const user1 = await User.findOne({_id: request.user.userId})
-    // const user = await findUserById(x.userId)
-    // reply.send(user)
+    console.log(request.user.userId)
+    const {
+        user: {userId}
+    } = request;
+    
+    const user = await findUById(userId)
+
+    reply.send(user)
 }
 
 export {
