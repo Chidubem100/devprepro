@@ -8,6 +8,7 @@ import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import userRoute from './modules/user/user.routes';
 import authRoute from './modules/auth/auth.routes';
+import questionRoute from './modules/question/question.routes';
 import { errorHandler } from './errors';
 import { deleteDatabase } from './config/dropDb';
 
@@ -41,7 +42,8 @@ const swaggerUiOptions = {
 app.register(fastifySwagger, swaggerOptions);
 app.register(fastifySwaggerUi, swaggerUiOptions);
 app.register(userRoute, {prefix: "/api/v1/user"});
-app.register(authRoute, {prefix:"/api/v1"})
+app.register(questionRoute, {prefix: "/api/v1/question"});
+app.register(authRoute, {prefix:"/api/v1"});
 app.register(errorHandler);
 
 app.register((app, options, done) =>{

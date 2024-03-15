@@ -1,7 +1,7 @@
 import User  from "./user.model";
 
 export async function createUser(val:User) {
-    console.log("services connected!")
+    
     const user = await User.create({
        email: val.email,
        password: val.password,
@@ -37,3 +37,10 @@ export async function findAllUser(){
     const user = await User.find({});
     return user;
 }
+
+// export async function findUserAndUpdate(val:string, username:string){
+//     const user = await User.findByIdAndUpdate(val, ,{
+//         new: true,
+//         runValidators: true
+//     })
+// }

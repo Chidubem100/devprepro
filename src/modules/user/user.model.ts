@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import { z } from "zod";
 
 type User = z.infer<typeof UserSchema>;
-// interface UserModel extends Document, User{}
+// interface User extends Document, User{}
 
 const userMongooseSchema = new mongoose.Schema<User>({
    
@@ -37,7 +37,20 @@ const userMongooseSchema = new mongoose.Schema<User>({
         type: Boolean,
         default: true
     },
-    verificationToken: String,
+    emailVerificationToken: String,
+    isEmailVerified: {
+        type:Boolean, 
+        default:false
+    },
+    verificationRequest: {
+        type:String,
+        default: "default",
+        enum: [
+            "default",
+            "pending",
+            "approved"
+        ]
+    },
     isVerified:{
         type:Boolean, 
         default:false
