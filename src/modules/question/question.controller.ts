@@ -1,9 +1,10 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { BadRequestApiError, NotFoundApiError } from "../../errors";
-import { createQuestions, findByIdAndUpdate, findQuestionById } from "./question.services";
+import { BadRequestApiError, NotFoundApiError, UnauthenticatedApiError, UnauthorizedApiError } from "../../errors";
+import { createQuestions, findByIdAndUpdate, findQuestionById, findQuestions } from "./question.services";
+import Question from "./question.model";
 
 async function createQuestion(
-    request: FastifyRequest<{Body:{category: string, body: string, username:string}}>,
+    request: FastifyRequest<{Body:{category: string, body: string, username:string, user:string}}>,
     reply: FastifyReply
 ){
     try {
@@ -15,10 +16,12 @@ async function createQuestion(
             body:{category, body}
         } = request;
 
-        if(category||body){
+        if(!category||!body){
             throw new BadRequestApiError("Please provide needed value(s)", 400)
         }
 
+        request.body.user = request.user.userId;
+        console.log(typeof(request.body.user))
         request.body.username = request.user.username;
         
         const post = await createQuestions(request.body)
@@ -35,7 +38,7 @@ async function createQuestion(
 }
 
 async function updateQuestion(
-    request: FastifyRequest<{Body:{}, Params:{postId:string}}>,
+    request: FastifyRequest<{Body:{body:string, category:string}, Params:{postId:string}}>,
     reply: FastifyReply
 ){
     try {
@@ -54,8 +57,10 @@ async function updateQuestion(
             throw new NotFoundApiError("Post not found", 404)
         }
 
-        // if(!post.user._id.equals(req.user.userId)){
-            // throw new CustomApiError.UnauthorizedError('UNAUTHORIZED');
+        const x = post.user
+
+        // if(!post.user.equals(request.user)){
+        //     throw new UnauthorizedApiError("Can't perform this action", 401);
         // }
 
         const updatedPosts = await findByIdAndUpdate(postId, userId, request.body)
@@ -85,31 +90,28 @@ async function upVoteQuestion(
 }
 
 async function allQuestions(
-    request: FastifyRequest<{Body:{}}>,
+    request: FastifyRequest<{Querystring:{category:string, body:string}}>,
     reply: FastifyReply
 ){
     try {
-        const {title,author, genre, category} = req.query;
+        const {body,category} = request.query;
         const queryObject = {};
     
-        if(title){
-            queryObject.bookTitle = {$regex: title, $options: 'i'};
-            
-        }
-        if(author){
-            queryObject.authorName = {$regex: author, $options: 'i'}
-        }
-        if(genre && genre !== 'all'){
-            queryObject.genres = genre;
-        }
-        if(category && category !== 'all'){
-            queryObject.bookCategory = category;
-        }
-        
-        const result = Post.find(queryObject).sort('-createdAt');
+        // if(body){
+        //     queryObject.body = {$regex: body, $options: 'i'}
+        // }
+        // if(category){
+        //     queryObject.category = {$regex: category, $options: 'i'}
+        // }
+        const result = Question.find(queryObject).sort('-createdAt');
+        // const result = Post.find(queryObject).sort('-createdAt');
     
         const posts = await result.populate({path: 'user', select:'username'});
-        res.status(StatusCodes.OK).json({success: true, nbOfHits:posts.length, posts });
+        return reply.status(200).send({
+            success: true, 
+            nbOfHits:posts.length, 
+            posts 
+        });
     
     } catch (error) {
         console.log(error)
@@ -124,10 +126,15 @@ async function myQuestions(
     try {
         const {
             user: {userId}
-        } = req;
+        } = request;
     
-        const posts = await Post.find({user:userId});
-        res.status(StatusCodes.OK).json({success: true, posts})
+        const posts = await findQuestions(userId);
+
+        return reply.status(200).send({
+            success: true, 
+            posts
+        });
+
     } catch (error) {
         console.log(error)
         return error;
@@ -135,7 +142,7 @@ async function myQuestions(
 }
 
 async function getQuestion(
-    request: FastifyRequest<{Body:{}}>,
+    request: FastifyRequest<{Body:{}, Params: {postId:string}}>,
     reply: FastifyReply
 ){
     try {
@@ -154,16 +161,10 @@ async function getQuestion(
             throw new NotFoundApiError("Post not found", 404)
         }
 
-        // if(!post.user._id.equals(req.user.userId)){
-            // throw new CustomApiError.UnauthorizedError('UNAUTHORIZED');
-        // }
-
-        const updatedPosts = await findByIdAndUpdate(postId, userId, request.body)
-
         return reply.status(200).send({
             success:true,
-            updatedPosts
-        })
+            post
+        });
         
 
     } catch (error) {

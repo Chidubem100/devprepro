@@ -3,7 +3,7 @@ import { authMiddleware } from "../../middleware";
 import { createQuestion } from "./question.controller";
 
 async function questionRoute(server:FastifyInstance) {
-    server.get("/test", {
+    server.post("/", {
         preHandler: authMiddleware,
         handler:createQuestion
     });

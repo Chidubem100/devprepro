@@ -9,6 +9,11 @@ export async function createQuestions(val:any){
     return question;
 };
 
+export async function findQuestions(val:string){
+    const question = await Question.find({val})
+    return question;
+}
+
 export async function findQuestionById(val:string, userId:string){
     const question = await Question.findById({_id:val,user:userId})
     return question;
@@ -19,7 +24,7 @@ export async function findOneQuestion(val:string){
     return question;
 }
 
-export async function findByIdAndUpdate(postId:string,userId:string, body:Question){
+export async function findByIdAndUpdate(postId:string,userId:string, body:{body:string, category:string}){
     const question = await Question.findByIdAndUpdate({_id:postId,usefr:userId },body,{
         runValidators: true,
         new: true

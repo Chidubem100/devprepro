@@ -15,7 +15,8 @@ const categoryEnum = z.enum([
 
 const QuestionSchema = z.object({
     username: z.string(),
-    user: z.object({}),
+    // user: z.string(),
+    user: z.object({id:z.string()}),
     isPromoted: z.boolean().default(false),
     category: categoryEnum.default("Frontend"),
     body: z.string(),
