@@ -7,11 +7,6 @@ type Question = z.infer<typeof QuestionSchema>;
 
 
 const questionSchema = new mongoose.Schema<Question>({
-    user: {
-        type: mongoose.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
     username: {
         type:String,
         required: true,
@@ -47,6 +42,11 @@ const questionSchema = new mongoose.Schema<Question>({
     upvote: {
         type: Number,
         default: 0
+    },
+    user: {
+        type: mongoose.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
 },{timestamps:true});
 

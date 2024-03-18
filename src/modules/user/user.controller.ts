@@ -213,6 +213,32 @@ async function setPrefrences(
             body: {preferences}
         } = request;
 
+        const user =  await findUserById(userId)
+
+        if(!user){
+            throw new NotFoundApiError("User not found", 404)
+        };
+
+        // if(!preferences){
+        //     throw new BadRequestApiError("Pleae")
+        // }
+        if(Array.isArray(preferences)){
+            preferences.forEach((preference:any) =>{
+                if(user.preferences.includes(preference)){
+                    user.preferences.push(preference)
+                }{
+                    throw new BadRequestApiError("Something went wrong", 400)
+                }
+            })
+        }
+
+        await user.save();
+
+        return reply.status(200).send({
+            success:true,
+            msg: "Preferences updated"
+        });
+
     } catch (error) {
         console.log(error)
         return error;
@@ -322,7 +348,7 @@ async function updateEmail(
 }
 
 async function changeColorMode(
-    request: FastifyRequest<{Body:{colorMode: string}}>,
+    request: FastifyRequest<{}>,
     reply: FastifyReply
 ){
     if(!request.body){
@@ -331,7 +357,6 @@ async function changeColorMode(
 
     const {
         user:{userId},
-        body: {colorMode}
     } = request;
 
     const user = await findUserById(userId);
@@ -349,7 +374,7 @@ async function changeColorMode(
 }
 
 async function changeTheme(
-    request: FastifyRequest<{Body:{theme: string}}>,
+    request: FastifyRequest<{}>,
     reply: FastifyReply
 ){
     if(!request.body){
@@ -358,7 +383,6 @@ async function changeTheme(
 
     const {
         user:{userId},
-        body: {theme}
     } = request;
 
     const user = await findUserById(userId);

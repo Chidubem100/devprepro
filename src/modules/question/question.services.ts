@@ -5,6 +5,7 @@ export async function createQuestions(val:any){
         username: val.username,
         category: val.category,
         body: val.body,
+        user: val.user
     });
     return question;
 };

@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { BadRequestApiError, NotFoundApiError, UnauthenticatedApiError, UnauthorizedApiError } from "../../errors";
 import { createQuestions, findByIdAndUpdate, findQuestionById, findQuestions } from "./question.services";
 import Question from "./question.model";
+import mongoose from "mongoose";
 
 async function createQuestion(
     request: FastifyRequest<{Body:{category: string, body: string, username:string, user:string}}>,
@@ -11,17 +12,18 @@ async function createQuestion(
         if(!request.body){
             throw new BadRequestApiError("Please provide needed value(s)", 400)
         }
-
+        // console.log(request.user)
         const {
             body:{category, body}
         } = request;
+
 
         if(!category||!body){
             throw new BadRequestApiError("Please provide needed value(s)", 400)
         }
 
         request.body.user = request.user.userId;
-        console.log(typeof(request.body.user))
+        // console.log(typeof(request.body.user))
         request.body.username = request.user.username;
         
         const post = await createQuestions(request.body)
@@ -57,11 +59,12 @@ async function updateQuestion(
             throw new NotFoundApiError("Post not found", 404)
         }
 
-        const x = post.user
-
-        // if(!post.user.equals(request.user)){
-        //     throw new UnauthorizedApiError("Can't perform this action", 401);
-        // }
+        const x = mongoose.Types.ObjectId.isValid(post.user._id)
+        const postIdr = new mongoose.Types.ObjectId(post.user._id)
+        
+        if(!postIdr.equals(request.user.userId)){
+            throw new UnauthorizedApiError("Can't perform this action", 401);
+        }
 
         const updatedPosts = await findByIdAndUpdate(postId, userId, request.body)
 
