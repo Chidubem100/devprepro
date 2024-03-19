@@ -21,6 +21,7 @@ const QuestionSchema = z.object({
         username: z.string(),
         email:z.string()
     }),
+    upvotes: z.array(z.string()),
     isPromoted: z.boolean().default(false),
     category: categoryEnum.default("Frontend"),
     body: z.string(),

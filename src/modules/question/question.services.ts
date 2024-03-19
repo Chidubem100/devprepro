@@ -15,6 +15,16 @@ export async function findQuestions(val:string){
     return question;
 }
 
+export async function getSingleQuestion(val: string){
+    const question = await Question.findOne({_id:val}).populate({
+        path: 'user', 
+        select: 'username'
+    }).populate({
+        path: 'answers'
+    });
+    return question;
+}
+
 export async function findQuestionById(val:string, userId:string){
     const question = await Question.findById({_id:val,user:userId})
     return question;

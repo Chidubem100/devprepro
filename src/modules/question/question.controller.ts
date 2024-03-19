@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { BadRequestApiError, NotFoundApiError, UnauthenticatedApiError, UnauthorizedApiError } from "../../errors";
-import { createQuestions, findByIdAndUpdate, findQuestionById, findQuestions } from "./question.services";
+import { createQuestions, findByIdAndUpdate, findOneQuestion, findQuestionById, findQuestions, getSingleQuestion } from "./question.services";
 import Question from "./question.model";
 import mongoose from "mongoose";
 
@@ -59,7 +59,7 @@ async function updateQuestion(
             throw new NotFoundApiError("Post not found", 404)
         }
 
-        const x = mongoose.Types.ObjectId.isValid(post.user._id)
+        // const x = mongoose.Types.ObjectId.isValid(post.user._id)
         const postIdr = new mongoose.Types.ObjectId(post.user._id)
         
         if(!postIdr.equals(request.user.userId)){
@@ -81,11 +81,42 @@ async function updateQuestion(
 }
 
 async function upVoteQuestion(
-    request: FastifyRequest<{Body:{}}>,
+    request: FastifyRequest<{Body:{}, Params:{postId:string}}>,
     reply: FastifyReply
 ){
     try {
-        
+        const {
+            params: {postId},
+            user:{userId}
+        } = request;
+
+        const post = await findOneQuestion(postId)
+
+        if(!post){
+            throw new NotFoundApiError("Post not found",404)
+        }
+
+        if(post.upvotes.includes(userId)){
+            const indexToRemove = post.upvotes.indexOf(userId)
+            if(indexToRemove){
+                post.upvotes.splice(indexToRemove, 1);
+            }
+            await post.save();
+            const upvoteCount = post.upvotes.length;
+            return reply.status(200).send({
+                success:true,
+                upvote: upvoteCount
+            });
+        }else{
+            post.upvotes.push(userId);
+            await post.save();
+            const upvoteCount = post.upvotes.length;
+            return reply.status(200).send({
+                success:true,
+                upvote: upvoteCount
+            });
+        }
+
     } catch (error) {
         console.log(error)
         return error;
@@ -158,7 +189,8 @@ async function getQuestion(
             user: {userId}
         } = request;
 
-        const post = await findQuestionById(postId, userId) 
+
+        const post = await getSingleQuestion(postId); 
 
         if(!post){
             throw new NotFoundApiError("Post not found", 404)
@@ -179,5 +211,9 @@ async function getQuestion(
 
 export {
     createQuestion,
-
+    updateQuestion,
+    upVoteQuestion,
+    allQuestions,
+    myQuestions,
+    getQuestion,
 }

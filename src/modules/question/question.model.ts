@@ -39,16 +39,28 @@ const questionSchema = new mongoose.Schema<Question>({
         required: true,
         trim: true
     },
-    upvote: {
-        type: Number,
-        default: 0
-    },
+    upvotes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     user: {
         type: mongoose.Types.ObjectId,
         ref: 'User',
         required: true
     }
-},{timestamps:true});
+},{
+    timestamps:true,
+    toJSON: {virtuals:true}, 
+    toObject: {virtuals:true}
+});
+
+questionSchema.virtual('answers',{
+    ref: 'Answer',
+    justOne: false,
+    foreignField: 'question',
+    localField: '_id'
+});
+
 
 const Question = mongoose.model("Question", questionSchema);
 export default Question;
