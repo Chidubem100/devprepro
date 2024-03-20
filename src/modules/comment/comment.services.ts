@@ -31,6 +31,9 @@ export async function getSingleCommentService(val:string){
 
 // all comments for an answer
 export async function getAllCommentService(val:string){
-    const comment = await Comment.find({answer:val})
+    const comment = await Comment.find({answer:val}).populate({
+        path: "user",
+        select: "username"
+    })
     return comment;
 }

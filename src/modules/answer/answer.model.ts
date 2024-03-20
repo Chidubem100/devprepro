@@ -48,5 +48,7 @@ answerSchema.virtual('comments',{
 });
 
 
+// Delete answer and all the comments under it
+
 const Answer = mongoose.model("Answer", answerSchema);
 export default Answer;

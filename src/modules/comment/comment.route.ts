@@ -7,7 +7,7 @@ import {
     deleteComment 
 } from "./comment.controller";
 
-async function CommentRoute(server:FastifyInstance) {
+async function commentRoute(server:FastifyInstance) {
     server.post("/", {
         preHandler: authMiddleware,
         handler:createComment
@@ -26,4 +26,4 @@ async function CommentRoute(server:FastifyInstance) {
     });
 }    
 
-export default CommentRoute;
+export default commentRoute;

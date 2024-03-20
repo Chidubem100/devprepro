@@ -1,11 +1,10 @@
 import mongoose from "mongoose";
-import CommentSchema from "./comment.schema";
 import {z} from "zod";
+import RepliesSchema from "./replies.schema";
 
+type Replies = z.infer<typeof RepliesSchema>;
 
-type Comment = z.infer<typeof CommentSchema>;
-
-const commentSchema = new mongoose.Schema<Comment>({
+const replySchema = new mongoose.Schema<Replies>({
     username: {
         type:String,
         required: true,
@@ -16,12 +15,12 @@ const commentSchema = new mongoose.Schema<Comment>({
         ref: "User",
         required: true
     },
-    answer: {
+    comment: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Answer",
+        ref: "Comment",
         required: true
     },
-    commentBody: {
+    replyBody: {
         type: String,
         required:true,
         trim: true
@@ -32,14 +31,5 @@ const commentSchema = new mongoose.Schema<Comment>({
     toObject: {virtuals:true}
 });
 
-commentSchema.virtual('replies', {
-    ref: 'Replies',
-    justOne: false,
-    foreignField: 'comment',
-    localField: '_id'
-});
-
-// Delete comment and all the replies umder it
-
-const Comment = mongoose.model("Comment", commentSchema);
-export default Comment;
+const Replies = mongoose.model("Replies", replySchema);
+export default Replies;
