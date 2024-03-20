@@ -25,7 +25,6 @@ const QuestionSchema = z.object({
     isPromoted: z.boolean().default(false),
     category: categoryEnum.default("Frontend"),
     body: z.string(),
-    upvote: z.number(),
     createdAt: z.date(),
     updatedAt: z.date()
 }); 

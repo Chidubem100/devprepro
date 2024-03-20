@@ -1,12 +1,12 @@
 import { FastifyInstance } from "fastify";
 import { authMiddleware } from "../../middleware";
 import { 
-    createQuestion,
-    updateQuestion,
-    upVoteQuestion,
-    allQuestions,
-    myQuestions,
-    getQuestion
+     createQuestion,
+     upVoteQuestion,
+     updateQuestion,
+     allQuestions,
+     myQuestions,
+     getQuestion
 } from "./question.controller";
 
 async function questionRoute(server:FastifyInstance) {
@@ -14,25 +14,25 @@ async function questionRoute(server:FastifyInstance) {
         preHandler: authMiddleware,
         handler:createQuestion
     });
-    server.post("/update", {
+    server.patch("/:id", {
         preHandler:authMiddleware,
         handler: updateQuestion
-    });
-    server.post("/upvote", {
-        preHandler:authMiddleware,
-        handler: upVoteQuestion
     });
     server.get("/", {
         preHandler:authMiddleware,
         handler: allQuestions
     });
-    server.get("/my-questions/:id", {
+    server.get("/:id", {
+        preHandler:authMiddleware,
+        handler: getQuestion
+    });
+    server.get("/my-questions", {
         preHandler:authMiddleware,
         handler: myQuestions
     });
-    server.post("/get-question/:id", {
+    server.post("/:id", {
         preHandler:authMiddleware,
-        handler: getQuestion
+        handler: upVoteQuestion
     });
 }    
 

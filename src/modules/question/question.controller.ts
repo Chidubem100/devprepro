@@ -28,7 +28,7 @@ async function createQuestion(
         
         const post = await createQuestions(request.body)
         
-        return reply.status(200).send({
+        return reply.status(201).send({
             success:true,
             post
         });
@@ -58,8 +58,6 @@ async function updateQuestion(
         if(!post){
             throw new NotFoundApiError("Post not found", 404)
         }
-
-        // const x = mongoose.Types.ObjectId.isValid(post.user._id)
         const postIdr = new mongoose.Types.ObjectId(post.user._id)
         
         if(!postIdr.equals(request.user.userId)){
@@ -105,7 +103,7 @@ async function upVoteQuestion(
             const upvoteCount = post.upvotes.length;
             return reply.status(200).send({
                 success:true,
-                upvote: upvoteCount
+                upvoteNum: upvoteCount
             });
         }else{
             post.upvotes.push(userId);
@@ -113,7 +111,7 @@ async function upVoteQuestion(
             const upvoteCount = post.upvotes.length;
             return reply.status(200).send({
                 success:true,
-                upvote: upvoteCount
+                upvoteNum: upvoteCount
             });
         }
 
@@ -180,10 +178,6 @@ async function getQuestion(
     reply: FastifyReply
 ){
     try {
-        if(!request.body){
-            throw new BadRequestApiError("Please provide the neede value(s)", 400)
-        }
-
         const {
             params: {postId},
             user: {userId}
